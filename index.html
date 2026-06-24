@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>V9 Plugin Payroll Engine</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+  <h1>V9 Plugin Payroll Engine</h1>
+  <div class="meta">V9 · plugin engine · matrix UI</div>
+
+  <label style="margin-left:auto;font-size:.85rem">
+    <input type="checkbox" id="adminToggle"> Admin
+  </label>
+</header>
+
+
+<!-- APP -->
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- HEADER -->
+    <div class="side-head">
+      <strong>Payroll paneel</strong>
+      <button class="btn ghost" id="collapseBtn">⮜</button>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" data-tab="settings">Instellingen</button>
+      <button class="tab" data-tab="plugins">Plugins</button>
+      <button class="tab" data-tab="rapport">Rapport</button>
+      <button class="tab" data-tab="admin" id="adminTabBtn" style="display:none">Admin</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="side-content">
+
+      <!-- TAB: SETTINGS -->
+      <section class="panel active" id="tab-settings">
+
+        <!-- BASIS INSTELLINGEN -->
+        <div class="card">
+          <h3>Basisinstellingen</h3>
+          <div class="body">
+
+            <div class="grid3">
+              <div>
+                <label>Maand</label>
+                <input type="month" id="month">
+              </div>
+              <div>
+                <label>Indienst</label>
+                <input type="date" id="start">
+              </div>
+              <div>
+                <label>GUL</label>
+                <input type="text" id="gul">
+              </div>
+            </div>
+
+            <div class="section-mini">
+              <label>Vaste P / dag</label>
+              <input type="text" id="pAmount">
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- ✅ LOONMATRIX -->
+        <div class="card">
+          <h3>Loonmatrix</h3>
+          <div class="body">
+            <div class="matrix-container">
+                <table id="loonMatrixTable" class="matrix-table"></table>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+        <!-- ACTIEVE INFO -->
+        <div class="card">
+          <h3>Actieve info</h3>
+          <div class="body">
+
+            <div class="summary">
+              <div class="box"><div class="lab">Loonklasse</div><div class="val" id="sumCode"></div></div>
+              <div class="box"><div class="lab">Matrix</div><div class="val" id="sumMatrix"></div></div>
+              <div class="box"><div class="lab">GUL</div><div class="val" id="sumGul"></div></div>
+              <div class="box"><div class="lab">Anc %</div><div class="val" id="sumAncPct"></div></div>
+            </div>
+
+            <div id="badges"></div>
+
+          </div>
+        </div>
+
+      <!-- TAB: PLUGINS -->
+      <section class="panel" id="tab-plugins">
+        <div class="card">
+          <h3>Plugins</h3>
+          <div class="body">
+            <div id="pluginControls"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Dagcodes</h3>
+          <div class="body" id="codePills"></div>
+        </div>
+      </section>
+
+
+      <!-- TAB: RAPPORT -->
+      <section class="panel" id="tab-rapport">
+        <div class="card">
+          <h3>Maandrapport</h3>
+          <div class="body">
+            <div class="summary">
+
+              <div class="box"><div class="lab">Uren</div><div class="val" id="totHours"></div></div>
+              <div class="box"><div class="lab">Basis</div><div class="val" id="totBasis"></div></div>
+              <div class="box"><div class="lab">Ploeg</div><div class="val" id="totShift"></div></div>
+              <div class="box"><div class="lab">Vast</div><div class="val" id="totFixed"></div></div>
+              <div class="box"><div class="lab">Extra</div><div class="val" id="totExtra"></div></div>
+              <div class="box"><div class="lab">Anc basis</div><div class="val" id="totAncBase"></div></div>
+              <div class="box"><div class="lab">Anc totaal</div><div class="val" id="sumAnc"></div></div>
+              <div class="box"><div class="lab">Bruto</div><div class="val" id="sumGross"></div></div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ADMIN -->
+      <section class="panel" id="tab-admin">
+        <div class="card">
+          <h3>Indexatie</h3>
+          <div class="body">
+            <input type="text" id="adminIndexFactor">
+          </div>
+        </div>
+
+          <!--admin-code per uurTabel -->
+          <div class="card" id="adminSmartHoursCard">
+            <h3>Admin · uren per code</h3>
+            <div class="body">
+                <div id="adminSmartHoursValuesTable"></div>
+
+                 <p class="hint">
+                    Leeg = manueel invullen<br>
+                    Getal = automatisch aantal uren<br>
+                    0 = altijd 0 uren
+                </p>
+            </div>
+        </div>
+      </section>
+
+    </div>
+  </aside>
+
+<div class="resizer" id="resizer"></div>
+    
+  <!-- MAIN -->
+    
+
+  <main class="main">
+
+    <button class="btn primary toggle-floating" id="openBtn">⮞</button>
+
+    <div class="toolbar">
+      <button id="collapseBtn2">Sidebar</button>
+      <button id="fullscreenBtn">Fullscreen</button>
+      <button id="resetBtn">Reset maand</button>
+    </div>
+
+    <div class="content">
+      <table id="payrollTable">
+        <thead>
+          <tr>
+            <th>Datum</th>
+            <th>Context</th>
+            <th>Code</th>
+            <th>Ploeg</th>
+            <th>Uren</th>
+            <th>Uurloon</th>
+            <th>Basis</th>
+            <th>Ploegpremie</th>
+            <th>Extra</th>
+            <th>Controle</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+
+<!-- ✅ CORRECTE SCRIPT LADEN -->
+<script src="js/utils.js"></script>
+<script src="js/config.js"></script>
+<script src="js/state.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/plugins.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
+``
