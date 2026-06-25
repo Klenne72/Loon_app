@@ -329,3 +329,57 @@ function updateSettings() {
 });
 
 console.log("ui.js geladen");
+
+// ======================================================
+// ADMIN LOONMATRIX (read-only)
+// ======================================================
+
+function renderAdminLoonMatrix() {
+
+  const table = document.getElementById("adminLoonMatrixTable");
+  if (!table) return;
+
+  // haal index-factor uit admin
+  const factor = parseNum(
+    document.getElementById("adminIndexFactor")?.value
+  ) || 1;
+
+  let html = `
+    <thead>
+      <tr>
+        <th></th>
+        <th>S</th>
+        <th>T</th>
+        <th>U</th>
+        <th>V</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
+
+  Object.keys(loonBaremaMatrix).forEach(b => {
+    const r = loonBaremaMatrix[b];
+
+    html += `
+      <tr>
+        <td>${b}</td>
+
+        ${["S","T","U","V"].map(cat => {
+
+          const base = r[cat];
+
+          // ✅ hier gebeurt simulatie
+          const value = base * factor;
+
+          return `<td>${nfmt(value, 4)}</td>`;
+
+        }).join("")}
+
+      </tr>
+    `;
+  });
+
+  html += `</tbody>`;
+
+  table.innerHTML = html;
+}
