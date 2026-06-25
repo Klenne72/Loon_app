@@ -44,12 +44,6 @@
   min-height: 0 !important;       /* CRUCIAAL voor flex scroll */
 }
 
-/* Panels mogen scroll niet blokkeren */
-.panel {
-  min-height: 0 !important;
-  overflow: visible !important;
-}
-
 /* Admin tab zelf */
 #tab-admin {
   min-height: 0;
@@ -285,4 +279,10 @@
 
 .panel.active {
   display: block;
+}
+
+/* Panels mogen scroll niet blokkeren */
+.panel {
+  min-height: 0 !important;
+  overflow: visible !important;
 }
