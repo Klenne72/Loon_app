@@ -268,3 +268,12 @@
   background: #dcfce7;
   color: #166534;
 }
+/* verberg admin smart hours card standaard */
+#adminSmartHoursCard {
+  display: none;
+}
+
+/* toon enkel wanneer admin tab actief is */
+#tab-admin.active #adminSmartHoursCard {
+  display: block;
+}
