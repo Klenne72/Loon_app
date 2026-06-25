@@ -176,47 +176,47 @@ function updateEntry(e) {
     };
   }
 
-   // ✅ gebruik admin-config indien beschikbaar
-  if (typeof getSmartHoursValueForCode === "function") {
-
-    const configuredValue = getSmartHoursValueForCode(entry.code);
-
-    if (configuredValue === null) {
-      entry.hours = "";
-    } 
-    else if (configuredValue !== undefined) {
-      entry.hours = configuredValue;
-    } 
-    else {
-      entry.hours = rule.standardHours ?? "";
-    }
-
-  } else {
-    // ✅ fallback → belangrijke regel
-    entry.hours = rule.standardHours ?? "";
-  }
- 
-      renderRows();
-}
-
   const entry = state.entries[key];
 
   if (field === "mask" || field === "lo") {
     entry[field] = e.target.checked;
 
-    if (field === "mask" && entry.mask) entry.lo = false;
-    if (field === "lo" && entry.lo) entry.mask = false;
+    if (field === "mask" && entry.mask) {
+      entry.lo = false;
+    }
+
+    if (field === "lo" && entry.lo) {
+      entry.mask = false;
+    }
   } else {
     entry[field] = e.target.value;
   }
 
   if (field === "code") {
     const rule = dayCodeRules[entry.code];
+
     entry.shiftRegime = "none";
-    entry.hours = rule ? rule.standardHours : "";
+
+    if (!rule) {
+      entry.hours = "";
+    } else if (typeof getSmartHoursValueForCode === "function") {
+      const configuredValue = getSmartHoursValueForCode(entry.code);
+
+      if (configuredValue === null) {
+        entry.hours = "";
+      } else if (configuredValue !== undefined) {
+        entry.hours = configuredValue;
+      } else {
+        entry.hours = rule.standardHours ?? "";
+      }
+    } else {
+      // Harde fallback: app blijft werken zonder admin-module
+      entry.hours = rule.standardHours ?? "";
+    }
   }
 
   renderRows();
+}
 
 function renderTotals() {
   let totals = {
