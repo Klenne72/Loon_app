@@ -164,3 +164,200 @@ function bindSmartHoursInputs() {
     };
   });
 }
+// ======================================================
+// ADMIN · UREN PER CODE
+// Clean vervanging voor admin-smart-hours add-ons
+// ======================================================
+
+window.SMART_HOURS_DEFAULTS = {
+  FF: 7.5,
+  Q: 7.5,
+  I: 7.5,
+  W: 7.5,
+  RO: 7.5,
+  FD: null,
+  OU: null,
+  S: 0,
+  T: 0,
+  IN: 0
+};
+
+
+function ensureSmartHoursValues() {
+  if (typeof adminSettings === "undefined") {
+    window.adminSettings = {};
+  }
+
+  // Nieuwe clean opslagvorm
+  if (!adminSettings.smartHoursValues) {
+    adminSettings.smartHoursValues = { ...window.SMART_HOURS_DEFAULTS };
+  } else {
+    adminSettings.smartHoursValues = {
+      ...window.SMART_HOURS_DEFAULTS,
+      ...adminSettings.smartHoursValues
+    };
+  }
+
+  // Migratie vanaf oude addon met smartHoursRules
+  // auto/manual/zero → concrete values
+  if (adminSettings.smartHoursRules && !adminSettings._smartHoursValuesMigrated) {
+    const rules = adminSettings.smartHoursRules;
+
+    if (Array.isArray(rules.auto)) {
+      rules.auto.forEach(code => {
+        if (typeof dayCodeRules !== "undefined" && dayCodeRules[code]) {
+          adminSettings.smartHoursValues[code] =
+            dayCodeRules[code].standardHours ?? 0;
+        }
+      });
+    }
+
+    if (Array.isArray(rules.manual)) {
+      rules.manual.forEach(code => {
+        adminSettings.smartHoursValues[code] = null;
+      });
+    }
+
+    if (Array.isArray(rules.zero)) {
+      rules.zero.forEach(code => {
+        adminSettings.smartHoursValues[code] = 0;
+      });
+    }
+
+    adminSettings._smartHoursValuesMigrated = true;
+
+    if (typeof saveAdminSettings === "function") {
+      saveAdminSettings();
+    }
+  }
+}
+
+
+function getHoursMode(value) {
+  if (value === null || value === "" || value === undefined) {
+    return "manual";
+  }
+
+  if (parseNum(value) === 0) {
+    return "zero";
+  }
+
+  return "auto";
+}
+
+
+function getHoursModeLabel(value) {
+  const mode = getHoursMode(value);
+
+  if (mode === "manual") return "Manueel";
+  if (mode === "zero") return "0 uren";
+
+  return "Auto";
+}
+
+
+// Globaal beschikbaar voor ui.js
+window.getSmartHoursValueForCode = function(code) {
+  ensureSmartHoursValues();
+
+  if (!code) return undefined;
+
+  if (
+    adminSettings.smartHoursValues &&
+    Object.prototype.hasOwnProperty.call(adminSettings.smartHoursValues, code)
+  ) {
+    return adminSettings.smartHoursValues[code];
+  }
+
+  if (typeof dayCodeRules !== "undefined" && dayCodeRules[code]) {
+    return dayCodeRules[code].standardHours ?? "";
+  }
+
+  return undefined;
+};
+
+
+function renderSmartHoursValuesTable() {
+  ensureSmartHoursValues();
+
+  const container = document.getElementById("adminSmartHoursValuesTable");
+  if (!container) return;
+
+  if (typeof dayCodeRules === "undefined") return;
+
+  const rows = Object.entries(dayCodeRules).map(([code, rule]) => {
+    const value = adminSettings.smartHoursValues[code];
+    const mode = getHoursMode(value);
+
+    const displayValue =
+      value === null || value === undefined
+        ? ""
+        : String(value).replace(".", ",");
+
+    return `
+      <div class="admin-hours-row">
+        <div><strong>${code}</strong></div>
+        <div>${rule.label || ""}</div>
+        <div>
+          <input
+            type="text"
+            inputmode="decimal"
+            data-smart-hour-code="${code}"
+            value="${displayValue}"
+            placeholder="manueel"
+          >
+        </div>
+        <div>
+          <span class="admin-hours-badge ${mode}">
+            ${getHoursModeLabel(value)}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  container.innerHTML = `
+    <div class="admin-hours-row header">
+      <div>Code</div>
+      <div>Omschrijving</div>
+      <div>Uren</div>
+      <div>Gedrag</div>
+    </div>
+    ${rows}
+  `;
+
+  bindSmartHoursInputs();
+}
+
+
+function bindSmartHoursInputs() {
+  document.querySelectorAll("[data-smart-hour-code]").forEach(input => {
+    input.onchange = e => {
+      const code = e.target.dataset.smartHourCode;
+      const raw = e.target.value.trim();
+
+      if (raw === "") {
+        adminSettings.smartHoursValues[code] = null;
+      } else {
+        adminSettings.smartHoursValues[code] = parseNum(raw);
+      }
+
+      if (typeof saveAdminSettings === "function") {
+        saveAdminSettings();
+      }
+
+      renderSmartHoursValuesTable();
+
+      if (typeof renderRows === "function") {
+        renderRows();
+      }
+    };
+  });
+}
+
+
+// Expliciete init-functie voor app.js/tab-switch
+window.initSmartHoursAdmin = function() {
+  ensureSmartHoursValues();
+  renderSmartHoursValuesTable();
+};

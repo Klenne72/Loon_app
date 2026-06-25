@@ -17,8 +17,8 @@ document.querySelectorAll('.tab').forEach(btn => {
     if (panel) panel.classList.add('active');
 
     if (btn.dataset.tab === "admin") {
-      if (typeof renderSmartHoursValuesTable === "function") {
-        renderSmartHoursValuesTable();
+      if (typeof initSmartHoursAdmin === "function") {
+        initSmartHoursAdmin();
       }
     }
   };
