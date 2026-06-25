@@ -17,10 +17,19 @@ document.querySelectorAll('.tab').forEach(btn => {
     if (panel) panel.classList.add('active');
 
     if (btn.dataset.tab === "admin") {
-      if (typeof initSmartHoursAdmin === "function") {
-        initSmartHoursAdmin();
-      }
-    }
+
+  // ✅ uren per code tabel
+  if (typeof initSmartHoursAdmin === "function") {
+    initSmartHoursAdmin();
+  }
+
+  // ✅ loonmatrix tonen
+  if (typeof renderAdminLoonMatrix === "function") {
+    renderAdminLoonMatrix();
+  }
+
+}
+
   };
 });
 
