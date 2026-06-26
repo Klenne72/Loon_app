@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="nl">
+  <!-- Dit is de titel in de tab van de browser-->
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,24 +9,23 @@
 
   <link rel="stylesheet" href="css/styles.css">
 </head>
-
+<!-- START van de website-inhoud-->
 <body>
 
-<!-- HEADER -->
+<!-- HEADER = Titel in bovenste balk over de hele pagina -->
 <header>
   <h1>V9 Plugin Payroll Engine</h1>
   <div class="meta">V9 · plugin engine · matrix UI</div>
-
-  <label style="margin-left:auto;font-size:.85rem">
-    <input type="checkbox" id="adminToggle"> Admin
-  </label>
+    <label style="margin-left:auto;font-size:.85rem">
+      <input type="checkbox" id="adminToggle"> Admin
+    </label>
 </header>
 
 
 <!-- APP -->
 <div class="app" id="app">
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR = START van aside-->
   <aside class="sidebar" id="sidebar">
 
     <!-- HEADER -->
@@ -34,7 +34,7 @@
       <button class="btn ghost" id="collapseBtn">⮜</button>
     </div>
 
-    <!-- TABS -->
+    <!-- TAB-Buttons -->
     <div class="tabs">
       <button class="tab active" data-tab="settings">Instellingen</button>
       <button class="tab" data-tab="plugins">Plugins</button>
@@ -58,10 +58,12 @@
                 <label>Maand</label>
                 <input type="month" id="month">
               </div>
+              
               <div>
                 <label>Indienst</label>
                 <input type="date" id="start">
               </div>
+              
               <div>
                 <label>GUL</label>
                 <input type="text" id="gul">
@@ -72,8 +74,10 @@
               <label>Vaste P / dag</label>
               <input type="text" id="pAmount">
             </div>
-
+            
+          <!-- Body afsluiten-->
           </div>
+        <!-- Class=card afsluiten-->
         </div>
 
 
@@ -171,11 +175,11 @@
     </div>
   </aside>
 
+  <!-- Dit is de balk tussen sidebar en groot paneel-->
 <div class="resizer" id="resizer"></div>
     
-  <!-- MAIN -->
+  <!-- MAIN = grote rekenblad dagberekening-->
     
-
   <main class="main">
 
     <button class="btn primary toggle-floating" id="openBtn">⮞</button>
