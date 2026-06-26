@@ -42,7 +42,7 @@
       <button class="tab" data-tab="admin" id="adminTabBtn" style="display:none">Admin</button>
     </div>
 
-    <!-- CONTENT -->
+    <!-- CONTENT met inhoud van de verschillende tabs -->
     <div class="side-content">
 
       <!-- TAB: SETTINGS -->
@@ -52,30 +52,35 @@
         <div class="card">
           <h3>Basisinstellingen</h3>
           <div class="body">
-
+            
+           <!-- Balk met 3 inputs-->
             <div class="grid3">
+
+              <!-- Inputveld maand -->
               <div>
                 <label>Maand</label>
                 <input type="month" id="month">
               </div>
-              
+
+              <!--Inputveld InDienstdatum-->
               <div>
                 <label>Indienst</label>
                 <input type="date" id="start">
               </div>
-              
+              <!-- Inputveld GUL-->
               <div>
                 <label>GUL</label>
                 <input type="text" id="gul">
               </div>
             </div>
 
+            <!-- Info P-dag -- nog te verwijderen -->
             <div class="section-mini">
               <label>Vaste P / dag</label>
               <input type="text" id="pAmount">
             </div>
             
-          <!-- Body afsluiten-->
+          <!-- Class=Body afsluiten-->
           </div>
         <!-- Class=card afsluiten-->
         </div>
@@ -93,7 +98,7 @@
 
       </section>
 
-        <!-- ACTIEVE INFO -->
+        <!-- ACTIEVE INFO, ook nog te verwijderen of verplaatsen -->
         <div class="card">
           <h3>Actieve info</h3>
           <div class="body">
@@ -110,7 +115,7 @@
           </div>
         </div>
 
-      <!-- TAB: PLUGINS -->
+      <!-- TAB: PLUGINS , misschien aan te passen naar zichtbare berekening van de verschillende dagen-->
       <section class="panel" id="tab-plugins">
         <div class="card">
           <h3>Plugins</h3>
@@ -148,8 +153,21 @@
       </section>
 
 
-      <!-- ADMIN -->
+      <!-- ADMIN-TAB -->
       <section class="panel" id="tab-admin">
+      
+        <!-- Loonmatrix invoegen-->
+       <div class="card">
+        <h3>Loonmatrix (basis)</h3>
+          <div class="body">
+
+            <div class="matrix-container">
+              <table id="adminLoonMatrixTable" class="matrix-table"></table>
+            </div>
+
+          </div>
+      </div>
+        <!--Indexatie-input , later nog wijzigen naar veld met knoppen-->
         <div class="card">
           <h3>Indexatie</h3>
           <div class="body">
@@ -157,22 +175,27 @@
           </div>
         </div>
 
-          <!--admin-code per uurTabel -->
+          <!--admin-uren per code -->
           <div class="card" id="adminSmartHoursCard">
             <h3>Admin · uren per code</h3>
             <div class="body">
-                <div id="adminSmartHoursValuesTable"></div>
-
-                 <p class="hint">
-                    Leeg = manueel invullen<br>
-                    Getal = automatisch aantal uren<br>
-                    0 = altijd 0 uren
-                </p>
+              <!--Aanroepen van de tabel-->  
+              <div id="adminSmartHoursValuesTable"></div>
+                  <!--Is de tekst onderaan de tabel-->     
+                  <p class="hint">
+                      Leeg = manueel invullen<br>
+                      Getal = automatisch aantal uren<br>
+                      0 = altijd 0 uren
+                  </p>
+            <!--Afsluiten class=body uren-tabel-->  
             </div>
+        <!--Afsluiten class=card uren-tabel-->    
         </div>
+      <!--Afluiten ADMIN_TAB-->  
       </section>
-
+    <!--Afsluiten class="side-content-->
     </div>
+  <!--Afsluiten SIDE-BAR-->  
   </aside>
 
   <!-- Dit is de balk tussen sidebar en groot paneel-->
