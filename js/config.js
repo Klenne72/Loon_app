@@ -59,7 +59,7 @@ const shiftPct = {
 // ------------------------------------------------------
 
 const shiftLabels = {
-  none: "Geen ploeg",
+  none: "Kies shift",
   Vroege: "Vroege",
   Late: "Late",
   Nacht: "Nacht"
