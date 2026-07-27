@@ -381,3 +381,25 @@ return `<td>${nfmt(value, 4)}</td>`;
 
   table.innerHTML = html;
 }
+
+function renderCurrentIndexInfo() {
+
+  const el =
+    document.getElementById("currentIndexInfo");
+
+  if (!el) return;
+
+  const date =
+    adminSettings.currentIndexDate;
+
+  if (!date) {
+
+    el.textContent =
+      "Loonmatrix actief sinds: origineel";
+
+    return;
+  }
+
+  el.textContent =
+    `Loonmatrix actief sinds: ${date}`;
+}
