@@ -111,6 +111,9 @@ function applyIndexation() {
   // snapshot nemen VOOR wijziging
   saveIndexSnapshot(factor);
 
+  adminSettings.currentIndexDate =
+  document.getElementById("adminIndexDate")?.value || "";
+
   Object.keys(loonBaremaMatrix).forEach(b => {
 
     const row = loonBaremaMatrix[b];
