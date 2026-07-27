@@ -302,27 +302,6 @@ window.initSmartHoursAdmin = function() {
   renderSmartHoursValuesTable();
 };
 
-const btnSim =
-  document.getElementById("btnSimulate");
-
-if (btnSim) {
-  btnSim.onclick = simulateIndexation;
-}
-
-const btnApply =
-  document.getElementById("btnApply");
-
-if (btnApply) {
-  btnApply.onclick = applyIndexation;
-}
-
-const btnReset =
-  document.getElementById("btnReset");
-
-if (btnReset) {
-  btnReset.onclick = resetIndexSimulation;
-}
-
 function bindIndexationButtons() {
 
   const btnSim =
@@ -345,5 +324,6 @@ function bindIndexationButtons() {
   if (btnReset) {
     btnReset.onclick = resetIndexSimulation;
   }
+  bindIndexationButtons();
 }
 
