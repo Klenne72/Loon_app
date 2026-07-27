@@ -50,9 +50,20 @@ function saveIndexSnapshot(factor) {
     adminSettings.indexHistory = [];
   }
 
-  adminSettings.indexHistory.push({
-    timestamp: new Date().toISOString(),
-    factor,
+  const indexDate =
+  document.getElementById("adminIndexDate")?.value || "";
+
+adminSettings.indexHistory.push({
+  timestamp: new Date().toISOString(),
+
+  effectiveDate: indexDate,
+
+  factor,
+
+  snapshot: {
+    ...
+  }
+});
 
     snapshot: {
 
