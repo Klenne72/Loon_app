@@ -377,8 +377,12 @@ function bindSmartHoursInputs() {
 
 // Expliciete init-functie voor app.js/tab-switch
 window.initSmartHoursAdmin = function() {
+
   ensureSmartHoursValues();
+
   renderSmartHoursValuesTable();
+
+  renderIndexHistory();
 };
 
 function bindIndexationButtons() {
