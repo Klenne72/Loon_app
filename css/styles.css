@@ -304,4 +304,19 @@
 #btnReset {
   min-width: 100px;
 }
+.admin-history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-history-table th,
+.admin-history-table td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-history-table th {
+  font-weight: 700;
+}
 
