@@ -88,6 +88,7 @@ function applyIndexation() {
   state.indexFactor = 1;
 
   saveAdminSettings();
+  renderIndexHistory();
 
   if (typeof renderLoonMatrix === "function")
     renderLoonMatrix();
