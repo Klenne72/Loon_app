@@ -119,6 +119,68 @@ function resetIndexSimulation() {
     renderAdminLoonMatrix();
   }
 }
+function renderIndexHistory() {
+
+  const container =
+    document.getElementById("indexHistoryTable");
+
+  if (!container) return;
+
+  const history =
+    adminSettings.indexHistory || [];
+
+  if (!history.length) {
+
+    container.innerHTML = `
+      <p class="hint">
+        Nog geen indexaties uitgevoerd.
+      </p>
+    `;
+
+    return;
+  }
+
+  const rows =
+    [...history]
+      .reverse()
+      .map(item => {
+
+        const date =
+          new Date(item.timestamp)
+            .toLocaleString("nl-BE");
+
+        return `
+          <tr>
+            <td>${date}</td>
+            <td>${nfmt(item.factor,4)}</td>
+            <td>
+              ${Object.keys(
+                item.snapshot?.loonMatrix || {}
+              ).length}
+              barema's
+            </td>
+          </tr>
+        `;
+      })
+      .join("");
+
+  container.innerHTML = `
+    <table class="admin-history-table">
+      <thead>
+        <tr>
+          <th>Datum</th>
+          <th>Factor</th>
+          <th>Snapshot</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        ${rows}
+      </tbody>
+
+    </table>
+  `;
+}
 
 // ======================================================
 // ADMIN · UREN PER CODE
