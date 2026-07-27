@@ -1,7 +1,32 @@
 // admin.js - adminmodus, indexatie en engine-instellingen
 const ADMIN_PASSWORD="admin123";
 const ADMIN_STORE="v9_admin_settings";
-let adminSettings={ffShift:42.20,weekdayShiftPct:{none:0,Vroege:2.60,Late:8.60,Nacht:25.60},saturdayShiftPct:{none:0,Vroege:26.60,Late:46.60,Nacht:73.80},sunFactor:2,indexFactor:1};
+let adminSettings = {
+  ffShift: 42.20,
+
+  weekdayShiftPct: {
+    none:0,
+    Vroege:2.60,
+    Late:8.60,
+    Nacht:25.60
+  },
+
+  saturdayShiftPct: {
+    none:0,
+    Vroege:26.60,
+    Late:46.60,
+    Nacht:73.80
+  },
+
+  sunFactor:2,
+
+  indexFactor:1,
+
+  currentIndexDate:"",
+
+  indexHistory:[]
+};
+
 function loadAdminSettings(){const saved=localStorage.getItem(ADMIN_STORE);if(!saved)return;try{const p=JSON.parse(saved);adminSettings={...adminSettings,...p,weekdayShiftPct:{...adminSettings.weekdayShiftPct,...(p.weekdayShiftPct||{})},saturdayShiftPct:{...adminSettings.saturdayShiftPct,...(p.saturdayShiftPct||{})}}}catch{}}
 function saveAdminSettings(){localStorage.setItem(ADMIN_STORE,JSON.stringify(adminSettings))}
 function initAdmin(){loadAdminSettings();const toggle=document.getElementById('adminToggle');const tabBtn=document.getElementById('adminTabBtn');if(!toggle||!tabBtn)return;toggle.onchange=()=>{if(toggle.checked){const pwd=prompt('Admin wachtwoord:');if(pwd===ADMIN_PASSWORD){tabBtn.style.display='inline-block';bindAdminInputs()}else{alert('Fout wachtwoord');toggle.checked=false;tabBtn.style.display='none'}}else{tabBtn.style.display='none'}}}
@@ -51,19 +76,15 @@ function saveIndexSnapshot(factor) {
   }
 
   const indexDate =
-  document.getElementById("adminIndexDate")?.value || "";
+    document.getElementById("adminIndexDate")?.value || "";
 
-adminSettings.indexHistory.push({
-  timestamp: new Date().toISOString(),
+  adminSettings.indexHistory.push({
 
-  effectiveDate: indexDate,
+    timestamp: new Date().toISOString(),
 
-  factor,
+    effectiveDate: indexDate,
 
-  snapshot: {
-    ...
-  }
-});
+    factor,
 
     snapshot: {
 
@@ -72,9 +93,15 @@ adminSettings.indexHistory.push({
       extraRates:
         typeof extraRates !== "undefined"
           ? structuredClone(extraRates)
-          : null
+          : null,
+
+      smartHoursValues:
+        structuredClone(
+          adminSettings.smartHoursValues || {}
+        )
 
     }
+
   });
 
   saveAdminSettings();
