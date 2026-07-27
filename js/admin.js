@@ -413,6 +413,8 @@ window.initSmartHoursAdmin = function() {
   renderSmartHoursValuesTable();
 
   renderIndexHistory();
+
+  bindIndexationButtons();
 };
 
 function bindIndexationButtons() {
