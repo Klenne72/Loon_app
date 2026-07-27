@@ -47,8 +47,12 @@ function simulateIndexation() {
   const factor =
     parseNum(input?.value) || 1;
 
-  state.indexFactor = factor;
-  state.indexSimulationActive = true;
+state.indexFactor = factor;
+state.indexSimulationActive = true;
+
+adminSettings.indexFactor = factor;
+
+saveAdminSettings();
 
   if (typeof renderAdminLoonMatrix === "function") {
     renderAdminLoonMatrix();
