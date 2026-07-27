@@ -73,9 +73,13 @@ function simulateIndexation() {
 
   const input =
     document.getElementById("adminIndexFactor");
+  
+  // omzetting % naar getal voor berekening 1.94% --> 1.0194) //
+  const percentage =
+  parseNum(input?.value) || 0;
 
-  const factor =
-    parseNum(input?.value) || 1;
+const factor =
+  1 + (percentage / 100);
 
 state.indexFactor = factor;
 state.indexSimulationActive = true;
