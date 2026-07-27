@@ -104,10 +104,22 @@ function resetIndexSimulation() {
   state.indexSimulationActive = false;
   state.indexFactor = 1;
 
+  adminSettings.indexFactor = 1;
+
+  const input =
+    document.getElementById("adminIndexFactor");
+
+  if (input) {
+    input.value = "1";
+  }
+
+  saveAdminSettings();
+
   if (typeof renderAdminLoonMatrix === "function") {
     renderAdminLoonMatrix();
   }
 }
+
 // ======================================================
 // ADMIN · UREN PER CODE
 // Clean vervanging voor admin-smart-hours add-ons
