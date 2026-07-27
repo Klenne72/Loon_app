@@ -165,6 +165,10 @@ function applyIndexation() {
   saveAdminSettings();
   renderIndexHistory();
 
+  if (typeof renderCurrentIndexInfo === "function") {
+  renderCurrentIndexInfo();
+}
+
   if (typeof renderLoonMatrix === "function")
     renderLoonMatrix();
 
