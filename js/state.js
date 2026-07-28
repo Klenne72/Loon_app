@@ -25,6 +25,13 @@ let state = {
   // Vaste P / dag
   pAmount: 140,
 
+  // ======================================================
+// INDEXATIE
+// ======================================================
+
+indexSimulationActive: false,
+indexFactor: 1,
+  
   pluginEnabled: {
     basicWage: true,
     ff: true,

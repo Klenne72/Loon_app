@@ -339,11 +339,6 @@ function renderAdminLoonMatrix() {
   const table = document.getElementById("adminLoonMatrixTable");
   if (!table) return;
 
-  // haal index-factor uit admin
-  const factor = parseNum(
-    document.getElementById("adminIndexFactor")?.value
-  ) || 1;
-
   let html = `
     <thead>
       <tr>
@@ -368,10 +363,13 @@ function renderAdminLoonMatrix() {
 
           const base = r[cat];
 
-          // ✅ hier gebeurt simulatie
-          const value = base * factor;
+let value = base;
 
-          return `<td>${nfmt(value, 4)}</td>`;
+if (state.indexSimulationActive) {
+  value = base * state.indexFactor;
+}
+
+return `<td>${nfmt(value, 4)}</td>`;
 
         }).join("")}
 
@@ -382,4 +380,26 @@ function renderAdminLoonMatrix() {
   html += `</tbody>`;
 
   table.innerHTML = html;
+}
+
+function renderCurrentIndexInfo() {
+
+  const el =
+    document.getElementById("currentIndexInfo");
+
+  if (!el) return;
+
+  const date =
+    adminSettings.currentIndexDate;
+
+  if (!date) {
+
+    el.textContent =
+      "Loonmatrix actief sinds: origineel";
+
+    return;
+  }
+
+  el.textContent =
+    `Loonmatrix actief sinds: ${date}`;
 }

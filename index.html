@@ -87,6 +87,12 @@
 
 
         <!-- ✅ LOONMATRIX -->
+        <div class="info-banner">
+          <strong id="currentIndexInfo">
+            Loonmatrix actief sinds: -
+          </strong>
+        </div>
+        
         <div class="card">
           <h3>Loonmatrix</h3>
           <div class="body">
@@ -167,13 +173,67 @@
 
           </div>
       </div>
-        <!--Indexatie-input , later nog wijzigen naar veld met knoppen-->
+        <!--Indexatie-input knoppen-->
         <div class="card">
-          <h3>Indexatie</h3>
-          <div class="body">
-            <input type="text" id="adminIndexFactor">
-          </div>
-        </div>
+  <h3>Indexatie</h3>
+
+  <div class="body">
+
+    <div class="index-toolbar">
+
+      <label for="adminIndexFactor">
+        Indexfactor
+      </label>
+
+      <input
+        type="number"
+        id="adminIndexFactor"
+        step="0.01"
+        min="0"
+        value="1.00"
+      >
+<label>Datum</label>
+<input 
+  type="date"
+  id="adminIndexDate"
+
+>
+      <button
+        type="button"
+        id="btnSimulate"
+        class="btn"
+      >
+        Simuleer
+      </button>
+
+      <button
+        type="button"
+        id="btnApply"
+        class="btn primary"
+      >
+        Pas toe
+      </button>
+
+      <button
+        type="button"
+        id="btnReset"
+        class="btn ghost"
+      >
+        Reset
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+        <div class="card">
+  <h3>Indexatiehistoriek</h3>
+
+  <div class="body">
+    <div id="indexHistoryTable"></div>
+  </div>
+</div>
 
           <!--admin-uren per code -->
           <div class="card" id="adminSmartHoursCard">

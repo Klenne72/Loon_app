@@ -59,7 +59,7 @@ const shiftPct = {
 // ------------------------------------------------------
 
 const shiftLabels = {
-  none: "Geen ploeg",
+  none: "Kies shift",
   Vroege: "Vroege",
   Late: "Late",
   Nacht: "Nacht"
@@ -176,6 +176,60 @@ const pluginMeta = {
   seniorityBase: "Maandanciënniteit-basis plugin"
 };
 
+// ------------------------------------------------------
+// ADMIN DEFAULTS
+// Centrale fabrieksinstellingen
+// ------------------------------------------------------
+
+const DEFAULT_ADMIN_SETTINGS = {
+
+  ffShift: 42.20,
+
+  weekdayShiftPct: {
+    none: 0,
+    Vroege: 2.60,
+    Late: 8.60,
+    Nacht: 25.60
+  },
+
+  saturdayShiftPct: {
+    none: 0,
+    Vroege: 26.60,
+    Late: 46.60,
+    Nacht: 73.80
+  },
+
+  sunFactor: 2,
+
+  indexFactor: 1,
+
+  indexHistory: []
+};
+
+// Zit nu nog in admin.js
+// voor toekomst nu al verplaatst
+
+const SMART_HOURS_DEFAULTS = {
+  FF: 7.5,
+  Q: 7.5,
+  I: 7.5,
+  W: 7.5,
+  RO: 7.5,
+  FD: null,
+  OU: null,
+  S: 0,
+  T: 0,
+  IN: 0
+};
+
+// ------------------------------------------------------
+// INDEXEERBARE TABELLEN
+// ------------------------------------------------------
+
+const INDEXABLE_SECTIONS = [
+  "loonmatrix",
+  "extraRates"
+];
 
 // ------------------------------------------------------
 // COMPATIBILITY HELPERS

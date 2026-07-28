@@ -139,6 +139,8 @@ if (btnReset) btnReset.onclick = () => {
   renderCodePills();
   renderPluginControls();
   renderRows();
+  renderCurrentIndexInfo();
+
   renderLoonMatrix();
 
 })();
