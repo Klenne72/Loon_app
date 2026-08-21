@@ -73,6 +73,62 @@ graph TD
 
 Als je de documentatie nog verder wilt verrijken, kan ik voor de nieuwe modules (zoals **`state.js`** of **`utils.js`**) een korte beschrijving maken van welke functies erin horen te zitten. Wil je dat we de documentatie voor een specifieke module nog verder uitdiepen?
 
+
+### 📊 Module Verbindingen (admin.js)
+
+Dit diagram toont hoe `admin.js` via UI-events communiceert met lokale opslag en externe functies binnen de frontend:
+
+```mermaid
+graph TD
+    %% Gebruikersinteracties
+    UI[HTML DOM / UI Events] -->|Wachtwoord & Inputs| admin.js
+    
+    subgraph admin.js [admin.js Module]
+        initAdmin[initAdmin] --> loadAdminSettings[loadAdminSettings]
+        initAdmin --> bindAdminInputs[bindAdminInputs]
+        bindAdminInputs --> bindAdminNumber[bindAdminNumber]
+        
+        %% Indexatie flows
+        simulateIndexation[simulateIndexation]
+        applyIndexation[applyIndexation] --> saveIndexSnapshot[saveIndexSnapshot]
+        resetIndexSimulation[resetIndexSimulation]
+        renderIndexHistory[renderIndexHistory]
+    end
+
+    %% Externe Databronnen en State
+    admin.js -->|JSON opslag| LS[(Browser LocalStorage: v9_admin_settings)]
+    admin.js -->|Leest/Schrijft| GS[Globale State / Variabelen: state, loonBaremaMatrix, extraRates]
+
+    %% Externe UI Render functies (Aanroepen)
+    admin.js -->|Trigger herberekening| renderRows[renderRows]
+    admin.js -->|Update UI Matrix| renderAdminLoonMatrix[renderAdminLoonMatrix]
+    admin.js -->|Update UI Matrix| renderLoonMatrix[renderLoonMatrix]
+    admin.js -->|Toon Index Info| renderCurrentIndexInfo[renderCurrentIndexInfo]
+
+    %% Styling voor GitHub leesbaarheid
+    style admin.js fill:#f4f5f7,stroke:#333,stroke-width:2px
+    style LS fill:#e1f5fe,stroke:#0288d1,stroke-width:1px
+    style GS fill:#fff3e0,stroke:#f57c00,stroke-width:1px
+```
+
+### 🔍 Belangrijke Afhankelijkheden (Dependencies)
+
+Om te voorkomen dat deze module crasht, leunt `admin.js` op de aanwezigheid van de volgende **globale objecten en functies** elders in de code:
+
+1. **Globale State & Data:**
+   * `state`: Wordt gebruikt om simulatie-statussen (`indexSimulationActive`) bij te houden.
+   * `loonBaremaMatrix` & `extraRates`: De loongegevens die door de indexatiefunctie worden overschreven.
+
+2. **Externe Render Functies (Losgekoppeld via `typeof` checks):**
+   * `renderRows()`: Wordt aangeroepen na wijzigingen om de hoofdtabellen te herberekenen.
+   * `renderLoonMatrix()` & `renderAdminLoonMatrix()`: Updaten de visuele tabellen na een indexatie of simulatie.
+   * `renderCurrentIndexInfo()`: Updatet de labels met de huidige indexatiedatum.
+
+3. **Helper Functies:**
+   * `parseNum()`: Nodig om komma-getallen uit de UI om te zetten naar JavaScript floats.
+   * `nfmt()`: Nodig in de geschiedenistabel om de indexeringsfactor mooi af te ronden (4 decimalen).
+
+
 ### 📊 Module Verbindingen (config.js)
 
 Dit diagram toont hoe de data uit `config.js` als basis dient voor de applicatie, en hoe `admin.js` hierop inbrengt tijdens runtime:
@@ -204,57 +260,7 @@ Wanneer je aanpassingen doet in de berekeningen, let dan goed op de volgende dri
 
 ### 🏗️ Applicatie Architectuur (9 Modules)
 
-Dit diagram toont de interactie en dataflow tussen alle 9 JavaScript-modules binnen het project:
 
-```mermaid
-graph TD
-    %% De Core Databron
-    subgraph Basis [Datalaag]
-        config[config.js<br>Centrale Brondata]
-    end
-
-    %% De Logische Engine
-    subgraph Logica [Berekening & Beheer]
-        admin[admin.js<br>Admin & Indexatie]
-        engine[engine.js<br>Rekenengine]
-        plugins[plugins.js<br>Payroll Plugins]
-        state[state.js<br>Globale Status]
-    end
-
-    %% De UI en Weergave laag
-    subgraph UI [Gebruikersinterface]
-        main[main.js<br>App Initialisatie]
-        render[render.js<br>UI Tabellen / Rows]
-        events[events.js<br>Knoppen & Inputs]
-        storage[storage.js<br>LocalStorage Helper]
-    end
-
-    %% Verbindingen en Dataflow
-    config -->|Levert basistarieven| engine
-    config -->|Levert defaults| admin
-    
-    admin -->|Muteert/Indexeert| config
-    admin -->|Slaat op via| storage
-    storage -->|Bij opstarten| admin
-
-    state -->|Levert actieve maand/GUL| engine
-    engine -->|Voert uit via| plugins
-    plugins -->|Bouwt op| engine
-
-    main -->|Start app & laadt| state
-    events -->|Triggert acties in| admin
-    events -->|Wijzigt| state
-    
-    state -->|Triggert| render
-    engine -->|Levert resultaat aan| render
-    render -->|Toont data in| UI_DOM[HTML Browser DOM]
-
-    %% Styling voor overzichtelijkheid
-    style config fill:#fffbe6,stroke:#d4b106,stroke-width:2px
-    style engine fill:#f4f5f7,stroke:#333,stroke-width:2px
-    style admin fill:#fff5f5,stroke:#cc0000,stroke-width:2px
-    style UI_DOM fill:#e6ffed,stroke:#28a745,stroke-width:2px
-```
 
 
 Aangepast:
