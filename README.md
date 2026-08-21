@@ -112,7 +112,74 @@ Bij het documenteren van deze module zijn er drie belangrijke aspecten om te ont
 
 ---
 
-Als je wilt, kunnen we nu kijken naar de **Payroll Engine / Render module** (de module die `renderRows()` of de berekeningen uitvoert). Dat is de ontbrekende schakel die de cirkel tussen `config.js` en `admin.js` compleet maakt. Wil je die code hier delen?
+### 📊 Module Verbindingen (engine.js)
+
+Dit diagram visualiseert hoe `engine.js` als centrale verwerker fungeert. Het trekt data aan uit zowel `config.js` als `admin.js`, berekent de payroll en spuugt een resultaatobject uit:
+
+```mermaid
+graph TD
+    %% Inkomende data stromen
+    subgraph config.js [config.js]
+        shiftPct[shiftPct.weekday / saturday]
+    end
+
+    subgraph admin.js [admin.js]
+        adminSettings[adminSettings Overrides<br>indexFactor, sunFactor, shiftPct]
+    end
+
+    %% De Reken Engine Kern
+    subgraph engine.js [engine.js - Payroll Engine]
+        direction TB
+        getBelgianHolidays[getBelgianHolidays<br>Berekent oa. Pasen] --> getDateContext[getDateContext]
+        
+        getDateContext -->|Bepaalt context| getShiftCalculation[getShiftCalculation]
+        getShiftPctSource[getShiftPctSource] -->|Checkt admin overrides| getShiftCalculation
+        
+        usedRate[usedRate] -->|Checkt loonbron| getIndexFactorForMonth[getIndexFactorForMonth]
+        
+        getSeniorityPercentage[getSeniorityPercentage]
+        
+        newResult[newResult] -->|Genereert basis| runPlugin[runPlugin Runner]
+    end
+
+    %% Globale State interactie
+    GS[(Globale State: state)] -->|Leest month, startDate, gul, pluginEnabled| engine.js
+    getSelectedMatrixRate[getSelectedMatrixRate] -->|Externe Helper| usedRate
+
+    %% Input van Config naar Engine
+    shiftPct -->|Fallback data| getShiftPctSource
+    
+    %% Input van Admin naar Engine
+    adminSettings -->|Live overschrijvingen| getShiftPctSource
+    adminSettings -->|Live indexeringsfactor| getIndexFactorForMonth
+    adminSettings -->|Zondagsfactor| getShiftCalculation
+
+    %% Uitgaande data
+    runPlugin -->|Levert op| Res[Resultaat Object<br>basisloon, ploegenpremie, dagtotaal, enz.]
+
+    %% Styling voor GitHub leesbaarheid
+    style engine.js fill:#f4f5f7,stroke:#333,stroke-width:2px
+    style config.js fill:#fffbe6,stroke:#d4b106,stroke-width:1px
+    style admin.js fill:#fff5f5,stroke:#cc0000,stroke-width:1px
+    style Res fill:#e6ffed,stroke:#28a745,stroke-width:2px
+```
+
+### 🔍 Belangrijke Rekenlogica & Relaties
+
+Wanneer je aanpassingen doet in de berekeningen, let dan goed op de volgende drie architectonische verbindingen:
+
+1. **De Indexatie-Uitzondering (`usedRate`):**
+   * Als een dagcoderegel de loonbron `matrix` heeft, wordt het basistarief vermenigvuldigd met de `indexFactor` uit `admin.js`.
+   * Als de loonbron `gul` (Garantie Uur Loon) is, wordt de indexeringsfactor **bewust genegeerd** en valt de engine direct terug op `state.gul`.
+
+2. **Dynamische Shift Toeslagen (`getShiftPctSource`):**
+   * De engine kijkt altijd eerst of de beheerder in de UI de percentages heeft aangepast (`adminSettings.saturdayShiftPct` of `weekdayShiftPct`). Pas als die er *niet* zijn, valt de engine terug op de hardgecodeerde fabrieksinstellingen (`shiftPct`) uit `config.js`.
+
+3. **Zondags- en Feestdagen-Multiplier:**
+   * In `getShiftCalculation` worden het basisloon en de ploegenpremie automatisch vermenigvuldigd (standaard `×2.00`) zodra de datumcontext een zondag of feestdag is. Dit getal wordt dynamisch uit `adminSettings.sunFactor` getrokken.
+
+4. **Plugin Structuur (`runPlugin`):**
+   * De engine voert berekeningen modulair uit. Via `state.pluginEnabled` wordt per dag/code gecontroleerd welke plugin (zoals gedefinieerd in `pluginMeta` in de config) mag draaien om het `newResult`-object te vullen.
 
 
 Aangepast:
