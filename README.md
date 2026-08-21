@@ -54,6 +54,65 @@ Om te voorkomen dat deze module crasht, leunt `admin.js` op de aanwezigheid van 
    * `parseNum()`: Nodig om komma-getallen uit de UI om te zetten naar JavaScript floats.
    * `nfmt()`: Nodig in de geschiedenistabel om de indexeringsfactor mooi af te ronden (4 decimalen).
 
+### 📊 Module Verbindingen (config.js)
+
+Dit diagram toont hoe de data uit `config.js` als basis dient voor de applicatie, en hoe `admin.js` hierop inbrengt tijdens runtime:
+
+```mermaid
+graph TD
+    %% Configuratie brondata
+    subgraph config.js [config.js - Systeem Fundament]
+        direction TB
+        LBM[loonBaremaMatrix<br>Barema's 4 t/m 10]
+        ER[extraRates<br>maskerPremie, loPremie]
+        DCR[dayCodeRules<br>Regels voor S, FF, Q, I, W, enz.]
+        DAS[DEFAULT_ADMIN_SETTINGS]
+        
+        %% Helpers binnen config
+        formatMatrixCode[formatMatrixCode] --> buildLoonMatrixOptions[buildLoonMatrixOptions]
+        LBM --> buildLoonMatrixOptions
+        buildLoonMatrixOptions --> loonMatrix[loonMatrix Array]
+    end
+
+    %% Inkomende mutaties vanuit Admin
+    subgraph admin.js [admin.js Module]
+        applyIndexation[applyIndexation]
+        simulateIndexation[simulateIndexation]
+    end
+
+    %% De interactie (De verbinding)
+    applyIndexation -->|Muteert runtime waarden| LBM
+    applyIndexation -->|Muteert runtime waarden| ER
+    simulateIndexation -->|Leest factor voor berekening| LBM
+
+    %% Uitgaande data naar de rest van de app
+    loonMatrix -->|Gelezen door| UI[Payroll Engine / UI Renderers]
+    DCR -->|Gelezen door| Engine[Berekenings-Plugins]
+
+    %% Styling voor GitHub leesbaarheid
+    style config.js fill:#f4f5f7,stroke:#333,stroke-width:2px
+    style admin.js fill:#fff5f5,stroke:#cc0000,stroke-width:1px
+    style loonMatrix fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+```
+
+### 🔍 Architectuur & Dataflow Analyse
+
+Bij het documenteren van deze module zijn er drie belangrijke aspecten om te onthouden voor toekomstig onderhoud:
+
+1. **Gedrag van de data (Muteerbaarheid):**
+   * Hoewel de file start met `const`, zijn `loonBaremaMatrix` en `extraRates` objecten. In JavaScript betekent dit dat hun *inhoud* nog steeds aangepast kan worden. 
+   * `admin.js` maakt hier actief gebruik van tijdens de **indexatie** (`applyIndexation`) om de uurlonen live te verhogen.
+
+2. **De `loonMatrix` Backwards Compatibility Bridge:**
+   * De functie `buildLoonMatrixOptions()` transformeert de overzichtelijke `loonBaremaMatrix` (een object) naar een platte array `loonMatrix` (bijv. `{ code: "S04", rate: 19.9596 }`).
+   * **Belangrijk:** Deze transformatie gebeurt *éénmalig* bij het opstarten van de app. Als de admin daarna de loonmatrix indexeert, verandert de oude `loonMatrix`-array **niet automatisch** mee, tenzij de UI de functie `buildLoonMatrixOptions()` opnieuw triggert.
+
+3. **Gekoppelde Plugins via `dayCodeRules`:**
+   * De `calculation`-property in `dayCodeRules` (zoals `ff`, `basicWage`, `contextShift`) mapt direct naar de strings in `pluginMeta`. Dit stuurt de rekenengine van de app aan.
+
+---
+
+Als je wilt, kunnen we nu kijken naar de **Payroll Engine / Render module** (de module die `renderRows()` of de berekeningen uitvoert). Dat is de ontbrekende schakel die de cirkel tussen `config.js` en `admin.js` compleet maakt. Wil je die code hier delen?
 
 
 Aangepast:
